@@ -1,0 +1,381 @@
+<template>
+
+  <UseHead title="Create - Users - Admin"/>
+
+  <div class="h-auto w-full flex flex-col p-5 gap-10">
+    <section class="">
+      <UBreadcrumb :links="links">
+        <template #divider>
+          <UIcon name="i-lucide-chevron-right" class="text-lg" />
+        </template>
+        <template #default="{ link, isActive }">
+          <div
+            :class="{ 'dark:text-white text-custom-800 text-lg cursor-default': isActive, 'text-custom-300 hover:text-custom-500 hover:dark:text-custom-300 dark:text-custom-500 text-lg': !isActive }"
+            class="rounded-full">
+            {{ link.label }}
+          </div>
+        </template>
+      </UBreadcrumb>
+    </section>
+    <section class="h-4/5 w-full flex justify-center items-center">
+      <div
+        class="sm:w-3/4 w-full h-auto border p-10 rounded border-custom-300 bg-custom-100 dark:bg-custom-900 dark:border-custom-700">
+
+        <UForm class="h-auto w-full flex flex-col gap-3" :state="state" @submit="onSubmit" :validate="validate"
+          @error="onError">
+
+          <header class="flex justify-between items-center">
+            <div class="font-semibold cursor-default flex items-center gap-1 w-1/2">
+              <UIcon name="i-lucide-user-round-plus" class="text-xl" />
+              <h1 class="font-bold text-xl">New User</h1>
+            </div>
+          </header>
+
+
+          <div class="flex justify-between">
+
+            <h1 class="text-lg w-auto">Personal Information</h1>
+
+            <div class="flex justify-end w-1/2 gap-x-2">
+
+              <section class="w-auto">
+                <UButton label="Cancel" icon="i-lucide-x"
+                  class="flex justify-center w-full items-center rounded dark:bg-red-600 dark:hover:bg-red-500 bg-red-700 hover:bg-red-600 dark:text-custom-100"
+                  to="/admin/users" />
+              </section>
+
+              <section class="w-auto">
+                <UButton 
+                  :label="label" 
+                  :loading-icon="loadIcon" 
+                  :loading="loading" 
+                  icon="i-lucide-save"
+                  class="flex justify-center w-full items-center rounded dark:text-white bg-green-600 hover:bg-green-700 dark:bg-green-700 hover:dark:bg-green-800" 
+                  type="submit" />
+              </section>
+            </div>
+          </div>
+
+          <hr class="border-custom-300 dark:border-custom-500 w-full">
+
+          <section class="flex w-full gap-x-2">
+
+            <!-- first name -->
+            <UFormGroup class="w-1/2" label="First name" name="first_name" :ui="{ error: 'mt-1' }">
+
+              <template #default="{ error }">
+                <UInput type="text" color="gray" v-model="state.user.first_name" size="md" :ui="{
+                  rounded: 'rounded',
+                  color: error ?
+                    { red: { outline: 'bg-red-100 dark:bg-red-50 text-custom-900 dark:text-custom-900 focus:ring-1 focus:ring-red-400 border-2 border-red-400 focus:border-red-400 active:ring-red-400 active:border-red-400' } } : { gray: { outline: 'dark:bg-custom-100 dark:text-custom-900' } }
+                }" />
+              </template>
+
+              <template #error="{ error }">
+                <span
+                  :class="[state.errors ? 'text-red-500 dark:text-red-400 text-xs font-bold' : 'text-primary-500 dark:text-primary-400']">
+                  {{ state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.first_name && state.errors._data.errors.first_name[0] }}
+                </span>
+              </template>
+            </UFormGroup>
+
+            <!-- last name -->
+            <UFormGroup class="w-1/2" label="Last name" name="last_name" :ui="{ error: 'mt-1' }">
+
+              <template #default="{ error }">
+                <UInput type="text" color="gray" v-model="state.user.last_name" size="md" :ui="{
+                  rounded: 'rounded',
+                  color: error ?
+                    { red: { outline: 'bg-red-100 dark:bg-red-50 text-custom-900 dark:text-custom-900 focus:ring-1 focus:ring-red-400 border-2 border-red-400 focus:border-red-400 active:ring-red-400 active:border-red-400' } } : { gray: { outline: 'dark:bg-custom-100 dark:text-custom-900' } }
+                }" />
+              </template>
+
+              <template #error="{ error }">
+                <span
+                  :class="[state.errors ? 'text-red-500 dark:text-red-400 text-xs font-bold' : 'text-primary-500 dark:text-primary-400']">
+                  {{ state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.last_name && state.errors._data.errors.last_name[0] }}
+                </span>
+              </template>
+            </UFormGroup>
+
+            <!-- middle initial -->
+            <UFormGroup class="w-1/4" label="M. I." name="m_i">
+              <template #default="{ error }">
+                <UInput type="text" color="gray" size="md" v-model="state.user.middle_initial" :ui="{
+                  rounded: 'rounded',
+                  color: error ?
+                    { red: { outline: 'bg-red-100 dark:bg-red-50 text-custom-900 dark:text-custom-900 focus:ring-1 focus:ring-red-400 border-2 border-red-400 focus:border-red-400 active:ring-red-400 active:border-red-400' } } : { gray: { outline: 'dark:bg-custom-100 dark:text-custom-900 py-2' } }
+                }" />
+              </template>
+              <template #error="{ error }">
+                <span
+                  :class="[state.errors ? 'text-red-500 dark:text-red-400 text-xs font-bold' : 'text-primary-500 dark:text-primary-400']">
+                  {{ state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.middle_initial && state.errors._data.errors.middle_initial[0] }}
+                </span>
+              </template>
+            </UFormGroup>
+          </section>
+
+          <section class="flex w-full gap-x-2">
+
+            <!-- gender -->
+            <UFormGroup class="w-2/3" label="Gender" name="gender">
+              <URadioGroup v-model="state.user.gender" :options="genderOptions" class="ml-2" />
+              <template #error="{ error }">
+                <span
+                  :class="[state.errors ? 'text-red-500 dark:text-red-400 text-xs font-bold' : 'text-primary-500 dark:text-primary-400']">
+                  {{ state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.gender && state.errors._data.errors.gender[0] }}
+                </span>
+              </template>
+            </UFormGroup>
+
+            <!-- phone -->
+            <UFormGroup class="w-1/2" name="phone">
+              <template #label>
+                <div class="flex items-center justify-start gap-1">
+                  <p class="text-sm">Phone no.</p>
+                  <UIcon name="i-emojione-v1-flag-for-philippines" />
+                </div>
+              </template>
+              <template #default="{ error }">
+                <UInput type="text" color="gray" size="md" v-model="state.user.phone_number" :ui="{
+                  rounded: 'rounded',
+                  color: error ?
+                    { red: { outline: 'bg-red-100 dark:bg-red-50 text-custom-900 dark:text-custom-900 focus:ring-1 focus:ring-red-400 border-2 border-red-400 focus:border-red-400 active:ring-red-400 active:border-red-400' } } : { gray: { outline: 'dark:bg-custom-100 dark:text-custom-900' } }
+                }" />
+              </template>
+              <template #error="{ error }">
+                <span
+                  :class="[state.errors ? 'text-red-500 dark:text-red-400 text-xs font-bold' : 'text-primary-500 dark:text-primary-400']">
+                  {{ state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.phone_number && state.errors._data.errors.phone_number[0] }}
+                </span>
+              </template>
+            </UFormGroup>
+
+            <!-- email -->
+            <UFormGroup class="w-1/2" name="email">
+              <template #label>
+                <p class="text-sm">Email</p>
+              </template>
+              <template #default="{ error }">
+                <UInput type="email" color="gray" size="md" v-model="state.user.email" :ui="{
+                  rounded: 'rounded',
+                  color: error ?
+                    { red: { outline: 'bg-red-100 dark:bg-red-50 text-custom-900 dark:text-custom-900 focus:ring-1 focus:ring-red-400 border-2 border-red-400 focus:border-red-400 active:ring-red-400 active:border-red-400' } } : { gray: { outline: 'dark:bg-custom-100 dark:text-custom-900' } }
+                }" />
+              </template>
+              <template #error="{ error }">
+                <span
+                  :class="[state.errors ? 'text-red-500 dark:text-red-400 text-xs font-bold' : 'text-primary-500 dark:text-primary-400']">
+                  {{ state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.email && state.errors._data.errors.email[0] }}
+                </span>
+              </template>
+            </UFormGroup>
+          </section>
+
+          <section class="flex w-full gap-x-2">
+
+            <!-- status -->
+            <UFormGroup class="w-2/3" label="Status" name="status">
+              <URadioGroup v-model="state.user.status" :options="statusOptions" class="ml-2"
+                :uiRadio="{ color: state.user.status === statusOptions[0].value ? 'text-green-500' : 'text-red-500' }" />
+            </UFormGroup>
+
+            <!-- role -->
+            <UFormGroup class="w-full" label="Role" name="role">
+              <template #default="{ error }">
+                <USelectMenu color="gray" selected-icon="i-heroicons-hand-thumb-up-solid" size="md" :ui="{
+                  rounded: 'rounded',
+                  color: error ?
+                    { red: { outline: 'bg-red-100 dark:bg-red-50 text-custom-900 dark:text-custom-900 focus:ring-1 focus:ring-red-400 border-2 border-red-400 focus:border-red-400 active:ring-red-400 active:border-red-400' } } : { gray: { outline: 'dark:bg-custom-100 dark:text-custom-900' } }
+                }"
+                  :uiMenu="{ background: 'dark:bg-custom-400', option: { color: 'dark:text-white', active: 'dark:bg-custom-600', empty: 'dark:text-white' }, empty: 'dark:text-white' }"
+                  v-model="state.user.role" :options="roleOptions" placeholder="Select a role" />
+              </template>
+              <template #error="{ error }">
+                <span
+                  :class="[state.errors ? 'text-red-500 dark:text-red-400 text-xs font-bold' : 'text-primary-500 dark:text-primary-400']">
+                  {{ state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.role && state.errors._data.errors.role[0] }}
+                </span>
+              </template>
+            </UFormGroup>
+          </section>
+
+          <h1 class="text-lg w-auto text-start mt-3 -mb-2">Login Credentials</h1>
+          <hr class="border-custom-300 dark:border-custom-500 w-full">
+
+          <section class="flex w-full gap-x-2">
+
+            <UFormGroup class="w-1/2" label="Username" name="username">
+              <template #default="{ error }">
+                <UInput type="text" color="gray" size="md" v-model="state.user.username" :ui="{
+                  rounded: 'rounded',
+                  color: error ?
+                    { red: { outline: 'bg-red-100 dark:bg-red-50 text-custom-900 dark:text-custom-900 focus:ring-1 focus:ring-red-400 border-2 border-red-400 focus:border-red-400 active:ring-red-400 active:border-red-400' } } : { gray: { outline: 'dark:bg-custom-100 dark:text-custom-900' } }
+                }" />
+              </template>
+              <template #error="{ error }">
+                <span
+                  :class="[state.errors ? 'text-red-500 dark:text-red-400 text-xs font-bold' : 'text-primary-500 dark:text-primary-400']">
+                  {{ state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.username && state.errors._data.errors.username[0] }}
+                </span>
+              </template>
+            </UFormGroup>
+
+            <UFormGroup class="w-1/2" label="Password" name="password">
+              <template #default="{ error }">
+                <UInput type="password" color="gray" size="md" v-model="state.user.password" :ui="{
+                  rounded: 'rounded',
+                  color: error ?
+                    { red: { outline: 'bg-red-100 dark:bg-red-50 text-custom-900 dark:text-custom-900 focus:ring-1 focus:ring-red-400 border-2 border-red-400 focus:border-red-400 active:ring-red-400 active:border-red-400' } } : { gray: { outline: 'dark:bg-custom-100 dark:text-custom-900' } }
+                }" />
+              </template>
+              <template #error="{ error }">
+                <span
+                  :class="[state.errors ? 'text-red-500 dark:text-red-400 text-xs font-bold' : 'text-primary-500 dark:text-primary-400']">
+                  {{ state.errors && state.errors._data && state.errors._data.errors && state.errors._data.errors.password && state.errors._data.errors.password[0] }}
+                </span>
+              </template>
+            </UFormGroup>
+
+          </section>
+        </UForm>
+      </div>
+    </section>
+  </div>
+</template>
+
+<script setup >
+definePageMeta({
+  layout: 'sidebar'
+})
+
+import { name, playSound } from '~/assets/js/sound'
+
+const roleOptions = [
+  {
+    value: 'admin',
+    label: 'Admin'
+  },
+  {
+    value: 'client',
+    label: 'Client'
+  }
+];
+
+const statusOptions = [
+  {
+    value: 'active',
+    label: 'Active'
+  },
+  {
+    value: 'inactive',
+    label: 'Inactive'
+  }
+];
+
+const genderOptions = [
+  {
+    value: 'male',
+    label: 'Male'
+  },
+  {
+    value: 'female',
+    label: 'Female'
+  }
+];
+
+const state = reactive({
+  errors: [],
+  user: {
+    first_name: '',
+    last_name: '',
+    middle_initial: '',
+    gender: '',
+    phone_number: '',
+    email: '',
+    status: '',
+    role: '',
+    username: '',
+    password: ''
+  }
+});
+
+const loading = ref(false);
+const loadIcon = ref('');
+const label = ref('Save');
+
+const toast = useToast()
+name.value = 'success_2'
+
+async function onSubmit() {
+  const params = {
+    first_name: state.user.first_name,
+    last_name: state.user.last_name,
+    middle_initial: state.user.middle_initial,
+    gender: state.user.gender,
+    phone_number: state.user.phone_number,
+    email: state.user.email,
+    status: state.user.status,
+    role: state.user.role.value,
+    username: state.user.username,
+    password: state.user.password
+  }
+  try {
+    const response = await $fetch(`http://127.0.0.1:8000/api/register`, {
+      method: 'POST',
+      body: params,
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('_token') // Use 'Bearer' prefix for token
+      }
+    })
+    if (response) {
+
+      console.log('rehistrado ka na', response)
+      loading.value = true;
+      loadIcon.value = 'i-lucide-loader-circle';
+      label.value = '';
+
+      setTimeout(() => {
+        playSound()
+
+        toast.add({
+            title: 'User Created Successfully!',
+            icon: 'i-lucide-user-round-check',
+            timeout: 2000,
+            ui: {
+            background : 'dark:bg-green-700 bg-green-300', 
+            progress: {
+                background: 'dark:bg-white bg-green-700 rounded-full'
+            }, 
+            ring: 'ring-1 ring-green-700 dark:ring-custom-900',
+            default: {
+                closeButton: { 
+                color: 'white',
+                }
+            },
+            icon: 'text-custom-900'
+            },
+        })
+
+        label.value = 'Save';
+        loading.value = false;
+        navigateTo('/admin/users')
+      }, 800)
+    }
+  } catch (error) {
+    state.errors = error.response
+    console.log(error.response);
+    console.log('error', error)
+  }
+
+  
+}
+
+const links = [{
+  label: 'Users',
+  to: '/admin/users'
+}, {
+  label: 'Create',
+}]
+</script>
