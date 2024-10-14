@@ -34,7 +34,7 @@ class DatabaseSeeder extends Seeder
                 'last_name' => 'suizo',
                 'middle_initial' => 'l',
                 'gender' => 'male',
-                'phone_number' => '+639810921795',
+                'phone_number' => '+639566401574',
                 'status' => 'active',
                 'role' => 'admin',
                 'username' => 'luis',

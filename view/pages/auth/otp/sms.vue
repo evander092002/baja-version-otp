@@ -80,79 +80,121 @@
 </template>
 
 <script setup lang="ts">
-import { user } from '~/assets/js/userLogged';
-import type { FormError, FormErrorEvent, FormSubmitEvent } from '#ui/types'
-import { name, playSound } from '~/assets/js/sound'
+import type { FormError, FormErrorEvent, FormSubmitEvent } from '#ui/types';
+import { name, playSound } from '~/assets/js/sound';
+import { user, fetchUser } from '~/assets/js/userLogged'; // Adjust the path as needed
+import { ref, reactive, onMounted } from 'vue';
 
+let securedOtp = null;
+
+// State to hold OTP and email
 const state = reactive({
-  otp: undefined
-})
+  otp: undefined,
+  number: '', // Initialize email as an empty string
+});
+
+const loadUser = async () => {
+  await fetchUser();
+  state.number = user.phone_number; // Use logged-in user's email after fetching
+  console.log(user); // Log the fetched email
+
+  sendOTP(); // luis
+};
+
+const sendOTP = async () => {
+    console.log('Sending OTP...')
+    try {
+    const response = await $fetch(`http://127.0.0.1:8000/api/otp-sms`, {
+      method: 'POST',
+      body: { phone_number: state.number },
+    });
+    console.log(response)
+    if (response && response.status === 'success') {
+      securedOtp = response.otp; // Store the OTP in the state
+      console.log('OTP sent successfully:', securedOtp); // You can use this OTP for verification
+    } else {
+      console.error('Failed to send OTP:', response.message);
+      console.log('Error sending OTP. Please try again.');
+    }
+  } catch (error) {
+    console.error('Error in sendOTP:', error);
+    console.log('Error in sendOTP. Please check the console.');
+  }
+};
+
+onMounted(() => {
+  loadUser(); // Load user data when the component mounts
+});
 
 const validate = (state: any): FormError[] => {
-  const errors = []
-  if (!state.otp) errors.push({ path: 'otp', message: 'Required' })
-  return errors
-}
+  const errors = [];
+  if (!state.otp) errors.push({ path: 'otp', message: 'Required' });
+  return errors;
+};
 
 const loading = ref(false);
 const loadIcon = ref('');
 const label = ref('Submit');
 
-const toast = useToast()
-name.value = 'login_1'
-
-const showToast = () => {
-  playSound()
-
-  toast.add({
-    title: 'Login Successfully!',
-    icon: 'i-lucide-log-in',
-    timeout: 2000,
-    ui: {
-      background : 'dark:bg-green-700 bg-green-300', 
-      progress: {
-        background: 'dark:bg-white bg-green-700 rounded-full'
-      }, 
-      ring: 'ring-1 ring-green-700 dark:ring-custom-900',
-      default: {
-        closeButton: { 
-          color: 'white',
-        }
-      },
-      icon: 'text-custom-900'
-    },
-  })
-}
-
 async function onSubmit(event: FormSubmitEvent<any>) {
-  // Do something with data
-  console.log(event.data)
+  if (securedOtp == state.otp) {
+    loading.value = true;
+    loadIcon.value = 'i-lucide-loader-circle';
+    label.value = '';
 
-  loading.value = true;
-  loadIcon.value = 'i-lucide-loader-circle';
-  label.value = '';
+    const toast = useToast();
+    name.value = 'login_1';
 
-  setTimeout(() => {
-    console.log(user.role);
+    const showToast = () => {
+        playSound();
 
-    if (user.role === 'client') {
-      showToast()
-      navigateTo('/client/monitor');
-    } else if (user.role === 'admin' || user.role === 'superadmin') {
-      showToast()
-      navigateTo('/admin/dashboard');
-    } else {
-      alert('Unrecognized role detected! Please contact an Admin for verification.');
-    }
+        toast.add({
+        title: 'Login Successfully!',
+        icon: 'i-lucide-log-in',
+        timeout: 2000,
+        ui: {
+            background: 'dark:bg-green-700 bg-green-300',
+            progress: {
+            background: 'dark:bg-white bg-green-700 rounded-full',
+            },
+            ring: 'ring-1 ring-green-700 dark:ring-custom-900',
+            default: {
+            closeButton: {
+                color: 'white',
+            },
+            },
+            icon: 'text-custom-900',
+        },
+        });
+    };
 
-    label.value = 'Submit';
-    loading.value = false;
-  }, 800);
+    setTimeout(() => {
+        // console.log(user.role);
+
+        // Conditional navigation based on user role
+        if (user.role === 'client') {
+        showToast();
+        navigateTo('/client/monitor');
+        } else if (user.role === 'admin' || user.role === 'superadmin') {
+        showToast();
+        navigateTo('/admin/dashboard');
+        } else {
+        alert('Unrecognized role detected! Please contact an Admin for verification.');
+        }
+
+        label.value = 'Submit';
+        loading.value = false;
+    }, 800);
+  } else {
+    alert('Invalid OTP.')
+  }
+
 }
 
 async function onError(event: FormErrorEvent) {
-  const element = document.getElementById(event.errors[0].id)
-  element?.focus()
-  element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  const element = document.getElementById(event.errors[0].id);
+  element?.focus();
+  element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
+
 </script>

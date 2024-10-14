@@ -34,4 +34,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::put('status/{id}', [AuthController::class, 'setStatus']);
 
-Route::post('/send-otp', [SmsController::class, 'sendEmail']); // luis
+//otp
+Route::post('/otp-email', [SmsController::class, 'sendEmail']);
+Route::post('/otp-sms', [SmsController::class, 'sendSms']); 
+
+//warning
+Route::post('/alert-sms', [SmsController::class, 'sendBulkSms']); 
+Route::post('/alert-emails', [SmsController::class, 'sendBulkEmail']); 
