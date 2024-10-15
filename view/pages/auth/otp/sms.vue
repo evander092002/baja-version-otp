@@ -138,38 +138,38 @@ async function onSubmit(event: FormSubmitEvent<any>) {
     loadIcon.value = 'i-lucide-loader-circle';
     label.value = '';
 
-    const toast = useToast();
-    name.value = 'login_1';
+    // const toast = useToast();
+    // name.value = 'login_1';
 
-    const showToast = () => {
-        playSound();
+    // const showToast = () => {
+    //     playSound();
 
-        toast.add({
-        title: 'Login Successfully!',
-        icon: 'i-lucide-log-in',
-        timeout: 2000,
-        ui: {
-            background: 'dark:bg-green-700 bg-green-300',
-            progress: {
-            background: 'dark:bg-white bg-green-700 rounded-full',
-            },
-            ring: 'ring-1 ring-green-700 dark:ring-custom-900',
-            default: {
-            closeButton: {
-                color: 'white',
-            },
-            },
-            icon: 'text-custom-900',
-        },
-        });
-    };
+    //     toast.add({
+    //     title: 'Login Successfully!',
+    //     icon: 'i-lucide-log-in',
+    //     timeout: 2000,
+    //     ui: {
+    //         background: 'dark:bg-green-700 bg-green-300',
+    //         progress: {
+    //         background: 'dark:bg-white bg-green-700 rounded-full',
+    //         },
+    //         ring: 'ring-1 ring-green-700 dark:ring-custom-900',
+    //         default: {
+    //         closeButton: {
+    //             color: 'white',
+    //         },
+    //         },
+    //         icon: 'text-custom-900',
+    //     },
+    //     });
+    // };
 
     setTimeout(() => {
         if (user.role === 'client') {
-        showToast();
+        // showToast();
         navigateTo('/client/monitor');
         } else if (user.role === 'admin' || user.role === 'superadmin') {
-        showToast();
+        // showToast();
         navigateTo('/admin/dashboard');
         } else {
         alert('Unrecognized role detected! Please contact an Admin for verification.');
