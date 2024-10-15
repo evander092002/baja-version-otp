@@ -31,15 +31,15 @@ class SmsController extends Controller
         try {
             // Server settings
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
+            $mail->Host = env('GMAIL_HOST');
             $mail->SMTPAuth = true;
-            $mail->Username = 'luisozius22@gmail.com'; 
-            $mail->Password = 'whublphhrmrvyokt';
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
+            $mail->Username = env('GMAIL_USERNAME'); 
+            $mail->Password = env('GMAIL_PASSWORD');
+            $mail->SMTPSecure = env('GMAIL_SMTPSecure');
+            $mail->Port = env('PORT');
 
             // Recipients
-            $mail->setFrom('luisozius22@gmail.com', 'CypherSentinel');
+            $mail->setFrom(env('GMAIL_USERNAME'), env('APP_NAME'));
             $mail->addAddress($request->email); 
 
             // Content
@@ -93,15 +93,15 @@ class SmsController extends Controller
         try {
             // Server settings
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
+            $mail->Host = env('GMAIL_HOST');
             $mail->SMTPAuth = true;
-            $mail->Username = 'luisozius22@gmail.com'; 
-            $mail->Password = 'whublphhrmrvyokt'; 
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
+            $mail->Username = env('GMAIL_USERNAME'); 
+            $mail->Password = env('GMAIL_PASSWORD');
+            $mail->SMTPSecure = env('GMAIL_SMTPSecure');
+            $mail->Port = env('PORT');
 
             // Set the sender's information
-            $mail->setFrom('luisozius22@gmail.com', 'CypherSentinel');
+            $mail->setFrom(env('GMAIL_USERNAME'), env('APP_NAME'));
 
             // Loop through each email address
             foreach ($emails as $email) {
@@ -166,7 +166,7 @@ class SmsController extends Controller
         $otp = rand(100000, 999999);
 
         // Traccar SMS Gateway URL
-        $traccarUrl = 'https://www.traccar.org/sms'; 
+        $url = env('SMS_GATEWAY'); 
 
         // Prepare the data for the request body
         $postData = [
@@ -177,8 +177,8 @@ class SmsController extends Controller
         try {
             // Send the request to the SMS gateway
             $response = Http::withHeaders([
-                'Authorization' => 'c3IsmfL-QKijd_WEM2kzoA:APA91bFap0VxWNT1A3cYpldokHQ_RND_Pyb1MA4JQmnTRj2oqXM4szS7CVT6nWyfCQdtB6SivvI4F5DbUeD7EpA6C2pXBDeU85YoyFSAjFuR_Td_OW4kFFlwVrOMSrBnprxCO3lQp-dl' 
-            ])->post($traccarUrl, $postData);
+                'Authorization' => env('SMS_AUTHORIZATION'), 
+            ])->post($url, $postData);
 
             // Check if the SMS was sent successfully
             if ($response->successful()) {
@@ -223,7 +223,7 @@ class SmsController extends Controller
         $message = $request->message;
 
         // Traccar SMS Gateway URL
-        $traccarUrl = 'https://www.traccar.org/sms';
+        $url = env('SMS_GATEWAY'); 
 
         // Variable to track failed numbers
         $failedNumbers = [];
@@ -239,8 +239,8 @@ class SmsController extends Controller
             try {
                 // Send the request to the SMS gateway
                 $response = Http::withHeaders([
-                    'Authorization' => 'c3IsmfL-QKijd_WEM2kzoA:APA91bFap0VxWNT1A3cYpldokHQ_RND_Pyb1MA4JQmnTRj2oqXM4szS7CVT6nWyfCQdtB6SivvI4F5DbUeD7EpA6C2pXBDeU85YoyFSAjFuR_Td_OW4kFFlwVrOMSrBnprxCO3lQp-dl', 
-                ])->post($traccarUrl, $postData);
+                    'Authorization' => env('SMS_AUTHORIZATION'), 
+                ])->post($url, $postData);
 
                 // Check if the SMS was sent successfully
                 if (!$response->successful()) {
