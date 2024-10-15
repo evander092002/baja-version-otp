@@ -82,7 +82,7 @@
   <script setup lang="ts">
   import type { FormError, FormErrorEvent, FormSubmitEvent } from '#ui/types';
   import { name, playSound } from '~/assets/js/sound';
-  import { user, fetchUser } from '~/assets/js/userLogged'; // Adjust the path as needed
+  import { user, fetchUser } from '~/assets/js/userLogged'; 
   import { ref, reactive, onMounted } from 'vue';
   
   let securedOtp = null;
@@ -90,15 +90,15 @@
   // State to hold OTP and email
   const state = reactive({
     otp: undefined,
-    email: '', // Initialize email as an empty string
+    email: '', 
   });
   
   const loadUser = async () => {
     await fetchUser();
-    state.email = user.email; // Use logged-in user's email after fetching
-    console.log(user); // Log the fetched email
+    state.email = user.email; 
+    console.log(user); 
   
-    sendOTP(); // luis
+    sendOTP();
   };
   
   const sendOTP = async () => {
@@ -110,8 +110,8 @@
       });
       console.log(response)
       if (response && response.status === 'success') {
-        securedOtp = response.otp; // Store the OTP in the state
-        console.log('OTP sent successfully:', securedOtp); // You can use this OTP for verification
+        securedOtp = response.otp; 
+        console.log('OTP sent successfully:', securedOtp); 
       } else {
         console.error('Failed to send OTP:', response.message);
         console.log('Error sending OTP. Please try again.');
@@ -121,10 +121,6 @@
       console.log('Error in sendOTP. Please check the console.');
     }
   };
-  
-  onMounted(() => {
-    loadUser(); // Load user data when the component mounts
-  });
   
   const validate = (state: any): FormError[] => {
     const errors = [];
@@ -169,9 +165,6 @@
       };
   
       setTimeout(() => {
-          // console.log(user.role);
-  
-          // Conditional navigation based on user role
           if (user.role === 'client') {
           showToast();
           navigateTo('/client/monitor');
@@ -197,6 +190,9 @@
     element?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
   
+  onMounted(() => {
+    loadUser(); 
+  });
   </script>
   
   

@@ -24,7 +24,6 @@ class SmsController extends Controller
             ], 400);
         }
 
-        // Generate a random 6-digit OTP
         $otp = rand(100000, 999999);
 
         $mail = new PHPMailer(true);
@@ -34,14 +33,14 @@ class SmsController extends Controller
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'luisozius22@gmail.com'; // Your Gmail address
-            $mail->Password = 'whublphhrmrvyokt'; // App-specific password or normal password
+            $mail->Username = 'luisozius22@gmail.com'; 
+            $mail->Password = 'whublphhrmrvyokt';
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
             // Recipients
             $mail->setFrom('luisozius22@gmail.com', 'CypherSentinel');
-            $mail->addAddress($request->email); // Recipient email address
+            $mail->addAddress($request->email); 
 
             // Content
             $mail->isHTML(false);
@@ -53,7 +52,7 @@ class SmsController extends Controller
             // Return the OTP in the response for verification on the frontend
             return response()->json([
                 'status' => 'success',
-                'otp' => $otp, // Return the OTP to be verified on the frontend
+                'otp' => $otp, 
             ], 200);
 
         } catch (Exception $e) {
@@ -68,9 +67,9 @@ class SmsController extends Controller
     {
         // Validate the input
         $validator = Validator::make($request->all(), [
-            'emails' => 'required', // Validate as an array
-            'emails.*' => 'required', // Validate each email
-            'message' => 'required', // The message content
+            'emails' => 'required', 
+            'emails.*' => 'required', 
+            'message' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -96,8 +95,8 @@ class SmsController extends Controller
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'luisozius22@gmail.com'; // Your Gmail address
-            $mail->Password = 'whublphhrmrvyokt'; // App-specific password or normal password
+            $mail->Username = 'luisozius22@gmail.com'; 
+            $mail->Password = 'whublphhrmrvyokt'; 
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
@@ -108,7 +107,7 @@ class SmsController extends Controller
             foreach ($emails as $email) {
                 // Clear all recipients and add the new one
                 $mail->clearAddresses();
-                $mail->addAddress($email); // Add the recipient email address
+                $mail->addAddress($email);
 
                 // Content
                 $mail->isHTML(false);
@@ -129,8 +128,8 @@ class SmsController extends Controller
                 return response()->json([
                     'status' => 'partial_success',
                     'message' => 'Some emails failed to send',
-                    'failed_emails' => $failedEmails, // Return the list of failed emails
-                ], 207); // HTTP 207 Multi-Status for partial success
+                    'failed_emails' => $failedEmails, 
+                ], 207); 
             }
 
             // All emails were sent successfully
@@ -178,14 +177,14 @@ class SmsController extends Controller
         try {
             // Send the request to the SMS gateway
             $response = Http::withHeaders([
-                'Authorization' => 'c3IsmfL-QKijd_WEM2kzoA:APA91bFap0VxWNT1A3cYpldokHQ_RND_Pyb1MA4JQmnTRj2oqXM4szS7CVT6nWyfCQdtB6SivvI4F5DbUeD7EpA6C2pXBDeU85YoyFSAjFuR_Td_OW4kFFlwVrOMSrBnprxCO3lQp-dl' // Fetch API key from environment variables
+                'Authorization' => 'c3IsmfL-QKijd_WEM2kzoA:APA91bFap0VxWNT1A3cYpldokHQ_RND_Pyb1MA4JQmnTRj2oqXM4szS7CVT6nWyfCQdtB6SivvI4F5DbUeD7EpA6C2pXBDeU85YoyFSAjFuR_Td_OW4kFFlwVrOMSrBnprxCO3lQp-dl' 
             ])->post($traccarUrl, $postData);
 
             // Check if the SMS was sent successfully
             if ($response->successful()) {
                 return response()->json([
                     'status' => 'success',
-                    'otp' => $otp, // Return the OTP for frontend verification
+                    'otp' => $otp, 
                 ], 200);
             } else {
                 return response()->json([
@@ -206,9 +205,9 @@ class SmsController extends Controller
     {
         // Validate the input
         $validator = Validator::make($request->all(), [
-            'phone_numbers' => 'required|array', // Validate as an array
-            'phone_numbers.*' => 'required', // Validate each phone number
-            'message' => 'required', // The message must be a string
+            'phone_numbers' => 'required|array', 
+            'phone_numbers.*' => 'required', 
+            'message' => 'required', 
         ]);
 
         if ($validator->fails()) {
@@ -240,7 +239,7 @@ class SmsController extends Controller
             try {
                 // Send the request to the SMS gateway
                 $response = Http::withHeaders([
-                    'Authorization' => 'c3IsmfL-QKijd_WEM2kzoA:APA91bFap0VxWNT1A3cYpldokHQ_RND_Pyb1MA4JQmnTRj2oqXM4szS7CVT6nWyfCQdtB6SivvI4F5DbUeD7EpA6C2pXBDeU85YoyFSAjFuR_Td_OW4kFFlwVrOMSrBnprxCO3lQp-dl', // Use environment variable for API key
+                    'Authorization' => 'c3IsmfL-QKijd_WEM2kzoA:APA91bFap0VxWNT1A3cYpldokHQ_RND_Pyb1MA4JQmnTRj2oqXM4szS7CVT6nWyfCQdtB6SivvI4F5DbUeD7EpA6C2pXBDeU85YoyFSAjFuR_Td_OW4kFFlwVrOMSrBnprxCO3lQp-dl', 
                 ])->post($traccarUrl, $postData);
 
                 // Check if the SMS was sent successfully
@@ -259,7 +258,7 @@ class SmsController extends Controller
             return response()->json([
                 'status' => 'partial_success',
                 'message' => 'Some messages failed to send',
-                'failed_numbers' => $failedNumbers, // Return the list of failed numbers
+                'failed_numbers' => $failedNumbers, 
             ], 207); // HTTP 207 Multi-Status for partial success
         }
 
